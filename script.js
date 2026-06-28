@@ -1,6 +1,6 @@
 // ============================================
 // ASTRA TERMINAL - Built by SΛILΞ
-// Complete JavaScript - Loading + Terminal
+// Complete JavaScript - Fixed Input Handling
 // ============================================
 
 (function() {
@@ -15,6 +15,9 @@
     const mainApp = document.getElementById('main-app');
     const particleCanvas = document.getElementById('particle-canvas');
     const statusTime = document.getElementById('status-time');
+    const terminalContainer = document.getElementById('terminal-container');
+    const clickHint = document.getElementById('click-hint');
+    const mobileInputHelper = document.getElementById('mobile-input-helper');
     
     // ==========================================
     // PARTICLE SYSTEM
@@ -199,6 +202,7 @@
             scrollback: 5000,
             tabStopWidth: 4,
             bellStyle: 'visual',
+            disableStdin: false, // EXPLICITLY ENABLE INPUT
         });
 
         // Add-ons
@@ -208,12 +212,72 @@
         term.loadAddon(fitAddon);
         term.loadAddon(webLinksAddon);
         
+        // Open terminal
         term.open(document.getElementById('terminal'));
         fitAddon.fit();
         
         window.addEventListener('resize', () => {
             fitAddon.fit();
         });
+
+        // ==========================================
+        // FOCUS MANAGEMENT (THE FIX)
+        // ==========================================
+        
+        // Function to focus terminal
+        function focusTerminal() {
+            term.focus();
+            terminalContainer.classList.add('focused');
+            clickHint.classList.add('hidden');
+            
+            // On mobile, also trigger the helper to open keyboard
+            if (isMobileDevice()) {
+                mobileInputHelper.focus();
+                // Immediately refocus terminal
+                setTimeout(() => term.focus(), 50);
+            }
+        }
+        
+        // Focus when clicking anywhere in terminal area
+        terminalContainer.addEventListener('click', (e) => {
+            focusTerminal();
+        });
+        
+        // Focus when clicking the hint
+        clickHint.addEventListener('click', (e) => {
+            e.stopPropagation();
+            focusTerminal();
+        });
+        
+        // Handle focus/blur on the xterm textarea
+        term.textarea.addEventListener('focus', () => {
+            terminalContainer.classList.add('focused');
+            clickHint.classList.add('hidden');
+        });
+        
+        term.textarea.addEventListener('blur', () => {
+            terminalContainer.classList.remove('focused');
+            // Show hint again after a delay if no input
+            setTimeout(() => {
+                if (document.activeElement !== term.textarea) {
+                    clickHint.classList.remove('hidden');
+                }
+            }, 2000);
+        });
+        
+        // Detect mobile device
+        function isMobileDevice() {
+            return /Android|iPhone|iPad|iPod|webOS/i.test(navigator.userAgent) || 
+                   ('ontouchstart' in window && window.innerWidth < 768);
+        }
+        
+        // On mobile, handle touch events specifically
+        if (isMobileDevice()) {
+            terminalContainer.addEventListener('touchstart', (e) => {
+                // Don't prevent default - let the touch propagate to xterm
+                setTimeout(() => focusTerminal(), 100);
+            });
+        }
 
         // ==========================================
         // COMMAND HISTORY
@@ -248,6 +312,149 @@
 \x1b[1;36m║\x1b[0m  \x1b[1;33msudo\x1b[0m       Try it if you dare...          \x1b[1;36m║\x1b[0m
 \x1b[1;36m║\x1b[0m                                              \x1b[1;36m║\x1b[0m
 \x1b[1;36m╚══════════════════════════════════════════════╝\x1b[0m
+
+\x1b[0;37mTip: Press \x1b[1;33m↑\x1b[0;37m/\x1b[1;33m↓\x1b[0;37m arrows for command history.\x1b[0m
+`;
+            },
+
+            about: () => {
+                return `
+\x1b[1;36m┌─────────────────────────────────────────────┐\x1b[0m
+\x1b[1;36m│\x1b[0m                                             \x1b[1;36m│\x1b[0m
+\x1b[1;36m│\x1b[0m  \x1b[1;33mASTRA Terminal v1.0\x1b[0m                        \x1b[1;36m│\x1b[0m
+\x1b[1;36m│\x1b[0m                                             \x1b[1;36m│\x1b[0m
+\x1b[1;36m│\x1b[0m  A cloud-native terminal environment         \x1b[1;36m│\x1b[0m
+\x1b[1;36m│\x1b[0m  designed for developers who demand          \x1b[1;36m│\x1b[0m
+\x1b[1;36m│\x1b[0m  power, speed, and style.                    \x1b[1;36m│\x1b[0m
+\x1b[1;36m│\x1b[0m                                             \x1b[1;36m│\x1b[0m
+\x1b[1;36m│\x1b[0m  \x1b[1;35mBuilt with passion by SΛILΞ\x1b[0m                \x1b[1;36m│\x1b[0m
+\x1b[1;36m│\x1b[0m                                             \x1b[1;36m│\x1b[0m
+\x1b[1;36m│\x1b[0m  \x1b[0;37m"Code the future, one command\x1b[0m               \x1b[1;36m│\x1b[0m
+\x1b[1;36m│\x1b[0m   \x1b[0;37mat a time."\x1b[0m                               \x1b[1;36m│\x1b[0m
+\x1b[1;36m│\x1b[0m                                             \x1b[1;36m│\x1b[0m
+\x1b[1;36m└─────────────────────────────────────────────┘\x1b[0m
+`;
+            },
+
+            clear: () => {
+                term.clear();
+                return '';
+            },
+
+            date: () => {
+                const now = new Date();
+                return `\x1b[1;32m${now.toLocaleString('en-US', { 
+                    weekday: 'long', year: 'numeric', month: 'long', day: 'numeric',
+                    hour: '2-digit', minute: '2-digit', second: '2-digit', timeZoneName: 'short'
+                })}\x1b[0m`;
+            },
+
+            whoami: () => `\x1b[1;33mastra-user@cloud-terminal\x1b[0m`,
+
+            neofetch: () => {
+                return `
+\x1b[1;36m        .--.        \x1b[0m  \x1b[1;33mASTRA@Cloud\x1b[0m
+\x1b[1;36m       |o_o |       \x1b[0m  \x1b[0;37m────────────────────\x1b[0m
+\x1b[1;36m       |:_/ |       \x1b[0m  \x1b[1;32mOS:\x1b[0m ASTRA Terminal v1.0
+\x1b[1;36m      //   \\ \\      \x1b[0m  \x1b[1;32mHost:\x1b[0m Cloud Instance
+\x1b[1;36m     (|     | )     \x1b[0m  \x1b[1;32mKernel:\x1b[0m WebAssembly
+\x1b[1;36m    /'\\_   _/\`\\     \x1b[0m  \x1b[1;32mShell:\x1b[0m ASTRA Shell
+\x1b[1;36m    \\___)=(___/     \x1b[0m  \x1b[1;32mUptime:\x1b[0m ${Math.floor(Math.random() * 24)} hours
+\x1b[1;36m                    \x1b[0m  \x1b[1;32mCreator:\x1b[0m SΛILΞ
+\x1b[1;36m                    \x1b[0m  \x1b[1;32mTheme:\x1b[0m Cyberpunk Neon
+`;
+            },
+
+            skills: () => {
+                return `
+\x1b[1;36m╔══════════════════════════════════════════════╗\x1b[0m
+\x1b[1;36m║           ASTRA CAPABILITIES                 ║\x1b[0m
+\x1b[1;36m╠══════════════════════════════════════════════╣\x1b[0m
+\x1b[1;36m║\x1b[0m                                              \x1b[1;36m║\x1b[0m
+\x1b[1;36m║\x1b[0m  \x1b[1;35m◆ Cloud Terminal\x1b[0m       \x1b[0;32m[██████████]\x1b[0m 100%  \x1b[1;36m║\x1b[0m
+\x1b[1;36m║\x1b[0m  \x1b[1;35m◆ AI Integration\x1b[0m      \x1b[0;33m[████████░░]\x1b[0m 80%   \x1b[1;36m║\x1b[0m
+\x1b[1;36m║\x1b[0m  \x1b[1;35m◆ Multi-Platform\x1b[0m      \x1b[0;32m[██████████]\x1b[0m 100%  \x1b[1;36m║\x1b[0m
+\x1b[1;36m║\x1b[0m  \x1b[1;35m◆ Real-time Sync\x1b[0m      \x1b[0;33m[███████░░░]\x1b[0m 70%   \x1b[1;36m║\x1b[0m
+\x1b[1;36m║\x1b[0m  \x1b[1;35m◆ Container Support\x1b[0m   \x1b[0;36m[█████░░░░░]\x1b[0m 50%   \x1b[1;36m║\x1b[0m
+\x1b[1;36m║\x1b[0m  \x1b[1;35m◆ Plugin System\x1b[0m       \x1b[0;36m[███░░░░░░░]\x1b[0m 30%   \x1b[1;36m║\x1b[0m
+\x1b[1;36m║\x1b[0m                                              \x1b[1;36m║\x1b[0m
+\x1b[1;36m╚══════════════════════════════════════════════╝\x1b[0m
+`;
+            },
+
+            contact: () => {
+                return `
+\x1b[1;36m┌─────────────────────────────────────────────┐\x1b[0m
+\x1b[1;36m│\x1b[0m  \x1b[1;33mGet in Touch with SΛILΞ\x1b[0m                     \x1b[1;36m│\x1b[0m
+\x1b[1;36m├─────────────────────────────────────────────┤\x1b[0m
+\x1b[1;36m│\x1b[0m                                             \x1b[1;36m│\x1b[0m
+\x1b[1;36m│\x1b[0m  \x1b[1;32mWhatsApp Channel:\x1b[0m                           \x1b[1;36m│\x1b[0m
+\x1b[1;36m│\x1b[0m  \x1b[0;34mhttps://whatsapp.com/channel/\x1b[0m               \x1b[1;36m│\x1b[0m
+\x1b[1;36m│\x1b[0m  \x1b[0;34m0029Vb794NKBadmdwkPN6i0B\x1b[0m                     \x1b[1;36m│\x1b[0m
+\x1b[1;36m│\x1b[0m                                             \x1b[1;36m│\x1b[0m
+\x1b[1;36m│\x1b[0m  \x1b[0;37mJoin for updates, tips, and more!\x1b[0m          \x1b[1;36m│\x1b[0m
+\x1b[1;36m│\x1b[0m                                             \x1b[1;36m│\x1b[0m
+\x1b[1;36m└─────────────────────────────────────────────┘\x1b[0m
+`;
+            },
+
+            echo: (args) => {
+                if (args.length === 0) return '\x1b[0;37mUsage: echo <text>\x1b[0m';
+                return `\x1b[0;37m${args.join(' ')}\x1b[0m`;
+            },
+
+            banner: () => welcomeArt(),
+
+            colors: () => {
+                let output = '\n\x1b[0;37mColor Palette:\x1b[0m\n\n';
+                const names = ['Black', 'Red', 'Green', 'Yellow', 'Blue', 'Magenta', 'Cyan', 'White'];
+                for (let i = 0; i < 8; i++) {
+                    output += `  \x1b[${30 + i}m███\x1b[0m ${names[i]}    \x1b[${90 + i}m███\x1b[0m Bright\n`;
+                }
+                return output;
+            },
+
+            weather: () => {
+                const conditions = ['☀️ Sunny', '🌤️ Partly Cloudy', '☁️ Cloudy', '🌧️ Rainy', '⛈️ Stormy', '🌨️ Snowy'];
+                const w = conditions[Math.floor(Math.random() * conditions.length)];
+                const t = Math.floor(Math.random() * 35) + 5;
+                return `
+\x1b[1;36m┌────────────────────────────────┐\x1b[0m
+\x1b[1;36m│\x1b[0m  \x1b[1;33mWeather (Demo)\x1b[0m                \x1b[1;36m│\x1b[0m
+\x1b[1;36m├────────────────────────────────┤\x1b[0m
+\x1b[1;36m│\x1b[0m  ${w}  \x1b[1;32m${t}°C\x1b[0m                  \x1b[1;36m│\x1b[0m
+\x1b[1;36m└────────────────────────────────┘\x1b[0m
+`;
+            },
+
+            quote: () => {
+                const quotes = [
+                    ['"First, solve the problem. Then, write the code."', '— John Johnson'],
+                    ['"Code is like humor. When you have to explain it, it\'s bad."', '— Cory House'],
+                    ['"Any fool can write code that a computer can understand."', '— Martin Fowler'],
+                ];
+                const q = quotes[Math.floor(Math.random() * quotes.length)];
+                return `\x1b[1;33m${q[0]}\x1b[0m\n\x1b[0;37m${q[1]}\x1b[0m`;
+            },
+
+            sudo: () => {
+                return `
+\x1b[1;31m╔══════════════════════════════════╗\x1b[0m
+\x1b[1;31m║  ⚠️  Nice try! Demo mode.  ⚠️   ║\x1b[0m
+\x1b[1;31m╚══════════════════════════════════╝\x1b[0m
+`;
+            }
+        };
+
+        function welcomeArt() {
+            return `
+\x1b[1;36m    ╔═══════════════════════════════════════════╗\x1b[0m
+\x1b[1;36m    ║     █████╗ ███████╗████████╗██████╗  █████╗     ║\x1b[0m
+\x1b[1;36m    ║    ██╔══██╗██╔════╝╚══██╔══╝██╔══██╗██╔══██╗    ║\x1b[0m
+\x1b[1;36m    ║    ███████║███████╗   ██║   ██████╔╝███████║    ║\x1b[0m
+\x1b[1;36m    ║    ██╔══██║╚════██║   ██║   ██╔══██╗██╔══██║    ║\x1b[0m
+\x1b[1;36m    ║    ██║  ██║███████║   ██║   ██║  ██║██║  ██║    ║\x1b[0m
+\x1b═══════════════════╝\x1b[0m
 
 \x1b[0;37mTip: Press \x1b[1;33m↑\x1b[0;37m/\x1b[1;33m↓\x1b[0;37m arrows for command history.\x1b[0m
 \x1b[0;37mTip: Press \x1b[1;33mTab\x1b[0;37m for autocomplete (coming soon).\x1b[0m
