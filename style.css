@@ -776,3 +776,92 @@ body {
     background: rgba(0, 240, 255, 0.3);
     color: white;
 }
+/* ============================================
+   CLICK HINT OVERLAY
+   ============================================ */
+
+.click-hint {
+    position: absolute;
+    bottom: 20px;
+    left: 50%;
+    transform: translateX(-50%);
+    z-index: 10;
+    background: rgba(0, 240, 255, 0.15);
+    border: 1px solid rgba(0, 240, 255, 0.4);
+    padding: 12px 24px;
+    border-radius: 30px;
+    font-family: var(--font-mono);
+    font-size: 0.85rem;
+    color: var(--neon-cyan);
+    letter-spacing: 0.05em;
+    animation: hint-pulse 2s ease-in-out infinite;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    pointer-events: auto;
+}
+
+.click-hint:hover {
+    background: rgba(0, 240, 255, 0.25);
+    border-color: rgba(0, 240, 255, 0.8);
+    box-shadow: 0 0 20px rgba(0, 240, 255, 0.3);
+}
+
+.click-hint.hidden {
+    opacity: 0;
+    visibility: hidden;
+    transform: translateX(-50%) translateY(10px);
+}
+
+@keyframes hint-pulse {
+    0%, 100% { box-shadow: 0 0 10px rgba(0, 240, 255, 0.2); }
+    50% { box-shadow: 0 0 25px rgba(0, 240, 255, 0.5); }
+}
+
+/* ============================================
+   TERMINAL FOCUS STYLES
+   ============================================ */
+
+.terminal-wrapper.focused {
+    box-shadow: inset 0 0 30px rgba(0, 240, 255, 0.05);
+}
+
+#terminal:focus-within {
+    outline: none;
+}
+
+/* Make the xterm textarea (hidden by xterm.js) more accessible */
+.xterm-helper-textarea {
+    opacity: 1 !important;
+    position: absolute !important;
+    top: 0 !important;
+    left: 0 !important;
+    width: 100% !important;
+    height: 100% !important;
+    z-index: 5 !important;
+}
+
+/* Terminal click target */
+.terminal-wrapper {
+    cursor: text;
+}
+
+/* ============================================
+   MOBILE FIXES
+   ============================================ */
+
+@media (max-width: 768px) {
+    .click-hint {
+        bottom: 15px;
+        padding: 10px 20px;
+        font-size: 0.75rem;
+    }
+}
+
+@media (max-width: 480px) {
+    .click-hint {
+        bottom: 10px;
+        padding: 8px 16px;
+        font-size: 0.7rem;
+        border-radius: 20px;
+    }
+}
