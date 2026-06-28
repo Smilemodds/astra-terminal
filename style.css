@@ -1,1 +1,778 @@
+/* ============================================
+   ASTRA TERMINAL - Built by 𝐒𝚳𝚰𝐋𝚵
+   Premium Cyberpunk Theme - Complete Styles
+   ============================================ */
 
+/* ---------- CSS Variables ---------- */
+:root {
+    --bg-deep: #0a0a0f;
+    --bg-panel: #0d0d1a;
+    --bg-terminal: #0b0b14;
+    
+    --neon-cyan: #00f0ff;
+    --neon-purple: #b347ea;
+    --neon-pink: #ff2d95;
+    --neon-green: #00ff88;
+    --neon-yellow: #ffd700;
+    
+    --text-primary: #e0e0f0;
+    --text-secondary: #8888aa;
+    --text-dim: #555577;
+    
+    --border-glow: rgba(0, 240, 255, 0.15);
+    --border-subtle: rgba(255, 255, 255, 0.05);
+    
+    --font-mono: 'JetBrains Mono', 'Fira Code', 'Consolas', 'Courier New', monospace;
+    --font-display: 'Orbitron', 'Segoe UI', sans-serif;
+    
+    --transition-fast: 0.2s ease;
+    --transition-medium: 0.4s ease;
+    --transition-slow: 0.6s ease;
+}
+
+/* ---------- Reset & Base ---------- */
+*, *::before, *::after {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+html {
+    font-size: 16px;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+}
+
+body {
+    background: var(--bg-deep);
+    color: var(--text-primary);
+    font-family: var(--font-mono);
+    overflow: hidden;
+    height: 100vh;
+    height: 100dvh;
+    width: 100vw;
+    width: 100dvw;
+    user-select: none;
+}
+
+/* ---------- Scrollbar Styling ---------- */
+::-webkit-scrollbar {
+    width: 6px;
+    height: 6px;
+}
+
+::-webkit-scrollbar-track {
+    background: transparent;
+}
+
+::-webkit-scrollbar-thumb {
+    background: rgba(0, 240, 255, 0.2);
+    border-radius: 3px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+    background: rgba(0, 240, 255, 0.4);
+}
+
+/* ============================================
+   LOADING SCREEN
+   ============================================ */
+
+#loading-screen {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: radial-gradient(ellipse at center, #0d0d24 0%, #06060f 60%, #020208 100%);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 9999;
+    transition: opacity 0.8s ease, visibility 0.8s ease;
+}
+
+#loading-screen.hidden {
+    opacity: 0;
+    visibility: hidden;
+    pointer-events: none;
+}
+
+#particle-canvas {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    pointer-events: none;
+    z-index: 1;
+}
+
+.loader-container {
+    text-align: center;
+    position: relative;
+    z-index: 2;
+}
+
+/* Glitch Text */
+.glitch-wrapper {
+    margin-bottom: 30px;
+}
+
+.glitch {
+    font-family: var(--font-display);
+    font-size: clamp(3rem, 8vw, 7rem);
+    font-weight: 900;
+    color: var(--neon-cyan);
+    letter-spacing: 0.3em;
+    position: relative;
+    display: inline-block;
+    text-shadow: 
+        0 0 10px var(--neon-cyan),
+        0 0 20px var(--neon-cyan),
+        0 0 40px var(--neon-cyan),
+        0 0 80px var(--neon-cyan),
+        0 0 120px var(--neon-cyan);
+    animation: glitch-skew 4s infinite linear alternate-reverse;
+}
+
+.glitch::before,
+.glitch::after {
+    content: attr(data-text);
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+}
+
+.glitch::before {
+    left: 2px;
+    text-shadow: -2px 0 var(--neon-pink);
+    clip: rect(44px, 450px, 56px, 0);
+    animation: glitch-anim-1 5s infinite linear alternate-reverse;
+}
+
+.glitch::after {
+    left: -2px;
+    text-shadow: -2px 0 var(--neon-purple), 2px 0 var(--neon-cyan);
+    clip: rect(24px, 450px, 78px, 0);
+    animation: glitch-anim-2 5s infinite linear alternate-reverse;
+}
+
+@keyframes glitch-anim-1 {
+    0% { clip: rect(30px, 9999px, 40px, 0); transform: skew(0.3deg); }
+    5% { clip: rect(80px, 9999px, 100px, 0); transform: skew(-0.2deg); }
+    10% { clip: rect(15px, 9999px, 55px, 0); transform: skew(0.1deg); }
+    15% { clip: rect(60px, 9999px, 85px, 0); transform: skew(-0.4deg); }
+    20% { clip: rect(10px, 9999px, 30px, 0); transform: skew(0.5deg); }
+    25% { clip: rect(50px, 9999px, 70px, 0); transform: skew(-0.1deg); }
+    30% { clip: rect(90px, 9999px, 110px, 0); transform: skew(0.3deg); }
+    35% { clip: rect(25px, 9999px, 45px, 0); transform: skew(-0.3deg); }
+    40% { clip: rect(70px, 9999px, 95px, 0); transform: skew(0.2deg); }
+    45% { clip: rect(5px, 9999px, 20px, 0); transform: skew(-0.5deg); }
+    50% { clip: rect(85px, 9999px, 105px, 0); transform: skew(0.1deg); }
+    55% { clip: rect(35px, 9999px, 50px, 0); transform: skew(-0.2deg); }
+    60% { clip: rect(100px, 9999px, 120px, 0); transform: skew(0.4deg); }
+    65% { clip: rect(40px, 9999px, 60px, 0); transform: skew(-0.1deg); }
+    70% { clip: rect(75px, 9999px, 90px, 0); transform: skew(0.3deg); }
+    75% { clip: rect(20px, 9999px, 35px, 0); transform: skew(-0.3deg); }
+    80% { clip: rect(95px, 9999px, 115px, 0); transform: skew(0.2deg); }
+    85% { clip: rect(45px, 9999px, 65px, 0); transform: skew(-0.4deg); }
+    90% { clip: rect(55px, 9999px, 75px, 0); transform: skew(0.1deg); }
+    95% { clip: rect(110px, 9999px, 130px, 0); transform: skew(-0.2deg); }
+    100% { clip: rect(65px, 9999px, 85px, 0); transform: skew(0.5deg); }
+}
+
+@keyframes glitch-anim-2 {
+    0% { clip: rect(65px, 9999px, 90px, 0); transform: skew(-0.2deg); }
+    5% { clip: rect(20px, 9999px, 45px, 0); transform: skew(0.4deg); }
+    10% { clip: rect(70px, 9999px, 95px, 0); transform: skew(-0.1deg); }
+    15% { clip: rect(35px, 9999px, 55px, 0); transform: skew(0.3deg); }
+    20% { clip: rect(85px, 9999px, 100px, 0); transform: skew(-0.3deg); }
+    25% { clip: rect(5px, 9999px, 25px, 0); transform: skew(0.2deg); }
+    30% { clip: rect(50px, 9999px, 75px, 0); transform: skew(-0.4deg); }
+    35% { clip: rect(95px, 9999px, 115px, 0); transform: skew(0.1deg); }
+    40% { clip: rect(15px, 9999px, 30px, 0); transform: skew(-0.2deg); }
+    45% { clip: rect(80px, 9999px, 105px, 0); transform: skew(0.5deg); }
+    50% { clip: rect(40px, 9999px, 60px, 0); transform: skew(-0.1deg); }
+    55% { clip: rect(100px, 9999px, 120px, 0); transform: skew(0.3deg); }
+    60% { clip: rect(25px, 9999px, 40px, 0); transform: skew(-0.3deg); }
+    65% { clip: rect(75px, 9999px, 95px, 0); transform: skew(0.2deg); }
+    70% { clip: rect(10px, 9999px, 35px, 0); transform: skew(-0.5deg); }
+    75% { clip: rect(90px, 9999px, 110px, 0); transform: skew(0.1deg); }
+    80% { clip: rect(45px, 9999px, 65px, 0); transform: skew(-0.2deg); }
+    85% { clip: rect(110px, 9999px, 130px, 0); transform: skew(0.4deg); }
+    90% { clip: rect(30px, 9999px, 50px, 0); transform: skew(-0.1deg); }
+    95% { clip: rect(55px, 9999px, 70px, 0); transform: skew(0.3deg); }
+    100% { clip: rect(105px, 9999px, 125px, 0); transform: skew(-0.3deg); }
+}
+
+@keyframes glitch-skew {
+    0% { transform: skew(0deg); }
+    10% { transform: skew(-2deg); }
+    20% { transform: skew(1deg); }
+    30% { transform: skew(0deg); }
+    40% { transform: skew(3deg); }
+    50% { transform: skew(0deg); }
+    60% { transform: skew(-1deg); }
+    70% { transform: skew(2deg); }
+    80% { transform: skew(0deg); }
+    90% { transform: skew(-3deg); }
+    100% { transform: skew(0deg); }
+}
+
+/* Progress Bar */
+.progress-bar-container {
+    width: 320px;
+    max-width: 80vw;
+    height: 3px;
+    background: rgba(255, 255, 255, 0.08);
+    border-radius: 10px;
+    margin: 0 auto 20px;
+    overflow: hidden;
+    position: relative;
+}
+
+.progress-bar-container::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(255, 255, 255, 0.03);
+    border-radius: 10px;
+}
+
+.progress-bar {
+    height: 100%;
+    background: linear-gradient(90deg, var(--neon-purple), var(--neon-cyan), var(--neon-pink), var(--neon-cyan));
+    background-size: 300% 100%;
+    width: 0%;
+    border-radius: 10px;
+    transition: width 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+    animation: progress-shimmer 2s ease infinite;
+    box-shadow: 
+        0 0 10px var(--neon-cyan),
+        0 0 20px var(--neon-purple),
+        0 0 40px rgba(0, 240, 255, 0.3);
+    position: relative;
+}
+
+.progress-bar::after {
+    content: '';
+    position: absolute;
+    top: 0;
+    right: 0;
+    width: 30px;
+    height: 100%;
+    background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.6), transparent);
+    animation: progress-flash 0.8s ease-in-out infinite;
+}
+
+@keyframes progress-shimmer {
+    0%, 100% { background-position: 0% 50%; }
+    50% { background-position: 100% 50%; }
+}
+
+@keyframes progress-flash {
+    0%, 100% { opacity: 0; }
+    50% { opacity: 1; }
+}
+
+/* Loading Text */
+.loading-text {
+    font-family: var(--font-mono);
+    font-size: 0.85rem;
+    color: var(--text-secondary);
+    letter-spacing: 0.2em;
+    margin-bottom: 10px;
+}
+
+#loading-status {
+    transition: all 0.3s ease;
+}
+
+.cursor-blink {
+    color: var(--neon-cyan);
+    animation: blink 1s step-end infinite;
+    font-weight: bold;
+}
+
+@keyframes blink {
+    0%, 100% { opacity: 1; }
+    50% { opacity: 0; }
+}
+
+.loading-subtitle {
+    font-family: var(--font-mono);
+    font-size: 0.7rem;
+    color: var(--text-dim);
+    letter-spacing: 0.15em;
+    margin-top: 5px;
+    opacity: 0.7;
+}
+
+/* ============================================
+   MAIN APPLICATION
+   ============================================ */
+
+#main-app {
+    display: flex;
+    flex-direction: column;
+    height: 100vh;
+    height: 100dvh;
+    width: 100vw;
+    width: 100dvw;
+    opacity: 0;
+    animation: fadeIn 0.6s ease forwards;
+}
+
+@keyframes fadeIn {
+    from { opacity: 0; transform: translateY(5px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+
+/* ---------- Top Bar ---------- */
+.top-bar {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 10px 20px;
+    background: var(--bg-panel);
+    border-bottom: 1px solid var(--border-glow);
+    backdrop-filter: blur(10px);
+    -webkit-backdrop-filter: blur(10px);
+    z-index: 100;
+    min-height: 50px;
+    flex-wrap: wrap;
+    gap: 10px;
+}
+
+.brand {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.brand-icon {
+    color: var(--neon-cyan);
+    font-size: 1.5rem;
+    animation: pulse-icon 2s ease-in-out infinite;
+}
+
+@keyframes pulse-icon {
+    0%, 100% { 
+        text-shadow: 0 0 5px var(--neon-cyan);
+        transform: scale(1);
+    }
+    50% { 
+        text-shadow: 0 0 20px var(--neon-cyan), 0 0 40px var(--neon-cyan);
+        transform: scale(1.1);
+    }
+}
+
+.brand-name {
+    font-family: var(--font-display);
+    font-weight: 700;
+    font-size: 1.3rem;
+    letter-spacing: 0.25em;
+    background: linear-gradient(135deg, var(--neon-cyan), var(--neon-purple));
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+}
+
+.brand-version {
+    font-size: 0.7rem;
+    color: var(--text-dim);
+    background: rgba(255, 255, 255, 0.05);
+    padding: 3px 10px;
+    border-radius: 12px;
+    border: 1px solid var(--border-subtle);
+    font-family: var(--font-mono);
+}
+
+.header-center {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 0.85rem;
+    font-family: var(--font-mono);
+}
+
+.built-by {
+    color: var(--text-secondary);
+    font-weight: 300;
+}
+
+.creator-name {
+    font-family: var(--font-display);
+    font-weight: 700;
+    color: var(--neon-purple);
+    letter-spacing: 0.1em;
+    text-shadow: 0 0 10px rgba(179, 71, 234, 0.5);
+    animation: creator-glow 3s ease-in-out infinite;
+}
+
+@keyframes creator-glow {
+    0%, 100% { text-shadow: 0 0 10px rgba(179, 71, 234, 0.5); }
+    50% { text-shadow: 0 0 20px rgba(179, 71, 234, 0.8), 0 0 40px rgba(179, 71, 234, 0.4); }
+}
+
+.header-actions {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+/* WhatsApp Button */
+.whatsapp-btn {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 8px 18px;
+    background: linear-gradient(135deg, #25D366, #128C7E);
+    color: white;
+    text-decoration: none;
+    border-radius: 25px;
+    font-size: 0.8rem;
+    font-weight: 600;
+    letter-spacing: 0.05em;
+    font-family: var(--font-mono);
+    transition: all 0.3s ease;
+    box-shadow: 0 0 15px rgba(37, 211, 102, 0.3);
+    position: relative;
+    overflow: hidden;
+}
+
+.whatsapp-btn::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: -100%;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
+    transition: left 0.5s ease;
+}
+
+.whatsapp-btn:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 0 30px rgba(37, 211, 102, 0.5), 0 5px 20px rgba(37, 211, 102, 0.3);
+}
+
+.whatsapp-btn:hover::before {
+    left: 100%;
+}
+
+.whatsapp-btn:active {
+    transform: translateY(0);
+}
+
+.whatsapp-icon {
+    width: 18px;
+    height: 18px;
+    flex-shrink: 0;
+}
+
+/* ---------- Terminal Wrapper ---------- */
+.terminal-wrapper {
+    flex: 1;
+    position: relative;
+    padding: 8px;
+    background: var(--bg-terminal);
+    overflow: hidden;
+}
+
+#terminal {
+    height: 100%;
+    border-radius: 6px;
+    overflow: hidden;
+    position: relative;
+    z-index: 2;
+}
+
+/* Terminal Glow */
+.terminal-glow {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    width: 70%;
+    height: 50%;
+    background: radial-gradient(ellipse, rgba(0, 240, 255, 0.04) 0%, transparent 70%);
+    pointer-events: none;
+    z-index: 1;
+    animation: glow-pulse 4s ease-in-out infinite;
+}
+
+@keyframes glow-pulse {
+    0%, 100% { opacity: 0.6; }
+    50% { opacity: 1; }
+}
+
+/* Scanline Effect */
+.terminal-scanline {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: repeating-linear-gradient(
+        0deg,
+        transparent,
+        transparent 2px,
+        rgba(0, 0, 0, 0.03) 2px,
+        rgba(0, 0, 0, 0.03) 4px
+    );
+    pointer-events: none;
+    z-index: 3;
+}
+
+/* ---------- Status Bar ---------- */
+.status-bar {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 6px 20px;
+    background: var(--bg-panel);
+    border-top: 1px solid var(--border-glow);
+    font-size: 0.7rem;
+    color: var(--text-secondary);
+    font-family: var(--font-mono);
+    min-height: 30px;
+    flex-wrap: wrap;
+    gap: 10px;
+}
+
+.status-separator {
+    color: var(--text-dim);
+    margin: 0 4px;
+}
+
+.status-dot {
+    display: inline-block;
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    margin-right: 6px;
+}
+
+.status-dot.online {
+    background: var(--neon-green);
+    box-shadow: 0 0 8px var(--neon-green);
+    animation: pulse-dot 2s ease-in-out infinite;
+}
+
+@keyframes pulse-dot {
+    0%, 100% { 
+        box-shadow: 0 0 5px var(--neon-green);
+        background: var(--neon-green);
+    }
+    50% { 
+        box-shadow: 0 0 15px var(--neon-green), 0 0 25px var(--neon-green);
+        background: #5fffaf;
+    }
+}
+
+.status-left, .status-center, .status-right {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+}
+
+.key-hint code {
+    background: rgba(255, 255, 255, 0.06);
+    padding: 2px 8px;
+    border-radius: 4px;
+    color: var(--neon-cyan);
+    font-family: var(--font-mono);
+    font-size: 0.7rem;
+    border: 1px solid rgba(0, 240, 255, 0.15);
+}
+
+#connection-type {
+    color: var(--neon-green);
+    font-weight: 600;
+    letter-spacing: 0.1em;
+}
+
+/* ============================================
+   RESPONSIVE DESIGN
+   ============================================ */
+
+@media (max-width: 768px) {
+    .top-bar {
+        padding: 8px 12px;
+        gap: 8px;
+    }
+    
+    .brand-name {
+        font-size: 1.1rem;
+        letter-spacing: 0.2em;
+    }
+    
+    .brand-version {
+        font-size: 0.65rem;
+        padding: 2px 8px;
+    }
+    
+    .header-center {
+        font-size: 0.7rem;
+        gap: 4px;
+    }
+    
+    .whatsapp-btn {
+        padding: 7px 14px;
+        font-size: 0.7rem;
+        gap: 6px;
+    }
+    
+    .status-bar {
+        padding: 5px 12px;
+        font-size: 0.65rem;
+        gap: 6px;
+    }
+    
+    .status-center {
+        display: none;
+    }
+    
+    .glitch {
+        font-size: 2.5rem;
+    }
+    
+    .terminal-wrapper {
+        padding: 4px;
+    }
+}
+
+@media (max-width: 480px) {
+    .top-bar {
+        padding: 6px 10px;
+        gap: 6px;
+    }
+    
+    .brand-icon {
+        font-size: 1.2rem;
+    }
+    
+    .brand-name {
+        font-size: 0.95rem;
+        letter-spacing: 0.15em;
+    }
+    
+    .brand-version {
+        display: none;
+    }
+    
+    .header-center {
+        display: none;
+    }
+    
+    .whatsapp-btn span {
+        display: none;
+    }
+    
+    .whatsapp-btn {
+        padding: 8px;
+        border-radius: 50%;
+        min-width: 36px;
+        min-height: 36px;
+        justify-content: center;
+    }
+    
+    .whatsapp-icon {
+        width: 20px;
+        height: 20px;
+    }
+    
+    .status-bar {
+        padding: 4px 8px;
+        font-size: 0.6rem;
+    }
+    
+    .status-left span:not(.status-dot):not(#connection-type) {
+        display: none;
+    }
+    
+    .glitch {
+        font-size: 2rem;
+        letter-spacing: 0.2em;
+    }
+    
+    .progress-bar-container {
+        width: 240px;
+    }
+    
+    .loading-text {
+        font-size: 0.7rem;
+    }
+    
+    .terminal-wrapper {
+        padding: 2px;
+    }
+}
+
+@media (max-width: 350px) {
+    .brand-name {
+        font-size: 0.8rem;
+    }
+    
+    .whatsapp-btn {
+        padding: 6px;
+        min-width: 30px;
+        min-height: 30px;
+    }
+    
+    .whatsapp-icon {
+        width: 16px;
+        height: 16px;
+    }
+    
+    .glitch {
+        font-size: 1.6rem;
+    }
+}
+
+/* ============================================
+   ACCESSIBILITY
+   ============================================ */
+
+@media (prefers-reduced-motion: reduce) {
+    .glitch,
+    .glitch::before,
+    .glitch::after {
+        animation: none !important;
+    }
+    
+    .progress-bar {
+        animation: none !important;
+    }
+    
+    .brand-icon,
+    .status-dot.online,
+    .creator-name,
+    .terminal-glow {
+        animation: none !important;
+    }
+}
+
+/* Focus styles for keyboard navigation */
+.whatsapp-btn:focus-visible {
+    outline: 2px solid var(--neon-cyan);
+    outline-offset: 2px;
+}
+
+/* Selection styling */
+::selection {
+    background: rgba(0, 240, 255, 0.3);
+    color: white;
+}
+
+::-moz-selection {
+    background: rgba(0, 240, 255, 0.3);
+    color: white;
+}
